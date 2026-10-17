@@ -1,0 +1,12 @@
+# Introduction to Retrieval-Augmented Generation (RAG) on Android
+
+Retrieval-Augmented Generation (RAG) combines document retrieval with language generation to provide precise, context-aware answers.
+Running RAG entirely on-device ensures complete privacy, zero latency dependency on cloud servers, and offline capability.
+
+## Document Parsing and Vector Indexing
+When a user adds a document (such as PDF, EPUB, DOCX, or TXT), RAGDroid parses the text into chapters or logical sections.
+Next, the text is split into chunks of fixed or dynamic length with overlapping contexts.
+
+## Embeddings and Search
+Each chunk is converted into a vector representation (embedding) using ONNX Runtime with a lightweight transformer model.
+The vector database (ObjectBox with HNSW indexing) allows instant nearest-neighbor vector similarity search directly on the smartphone.

@@ -1,0 +1,73 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+**/build/
+
+# Gradle wrapper jar (large binary — regenerate via `gradle wrapper`)
+# Uncomment the line below if you prefer NOT to track the wrapper jar:
+# gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc.)
+local.properties
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+.navigation/
+
+# Kotlin
+.kotlin/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Keystore files
+*.jks
+*.keystore
+
+# Log files
+*.log
+
+# Android Profiling
+*.hprof
+
+# Signing config
+signing.properties
+
+# Google Services
+google-services.json
+
+# ONNX model files (too large for git — download at runtime or use Git LFS)
+app/src/main/assets/models/*.onnx
+
+# Crash logs
+crashlytics-build.properties
+
+# Internal docs (architecture, design notes)
+.docs/
+
+# Node (if any tooling)
+node_modules/

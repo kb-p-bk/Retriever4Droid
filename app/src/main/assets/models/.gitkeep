@@ -1,0 +1,26 @@
+# ONNX Model Directory
+
+This directory is reserved for the embedding model files used by RAGDroid.
+
+## Expected Model: all-MiniLM-L6-v2
+
+The app uses the `all-MiniLM-L6-v2` ONNX model for generating 384-dimensional embeddings.
+
+### Option 1: Bundle in APK (increases APK size by ~80MB)
+Place the following files here:
+- `model.onnx` — the ONNX model file
+- `tokenizer.json` — the tokenizer configuration
+
+### Option 2: Download on First Launch (recommended)
+Leave this directory empty. The `ModelManager` will download the model from a CDN
+or GitHub release on the app's first launch and cache it in the app's files directory.
+
+See `data/embedding/ModelManager.kt` for the download logic.
+
+---
+
+**Model Source:**
+https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+
+**ONNX Export:**
+Use `optimum-cli` or Hugging Face's ONNX export tools to convert the PyTorch model.
