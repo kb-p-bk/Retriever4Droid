@@ -616,9 +616,7 @@ private fun IngestDocumentTagCard(
                     onValueChange = { tagInput = it },
                     placeholder = { Text("Add tag...") },
                     singleLine = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
+                    modifier = Modifier.weight(1f)
                 )
                 IconButton(
                     onClick = {

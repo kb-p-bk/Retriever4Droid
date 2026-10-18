@@ -204,7 +204,7 @@ fun LibraryScreen(
                         isDeleting = (uiState.deletingDocId == document.id),
                         onDelete = { viewModel.onDeleteRequested(document.id) },
                         onEditTags = { viewModel.onOpenTagDialog(document.id) },
-                        onOpenChunkViewer = { onNavigateToChunk(document.id, 0) }
+                        onOpenChunkViewer = { onNavigateToChunk(document.id, -1) }
                     )
                 }
             }

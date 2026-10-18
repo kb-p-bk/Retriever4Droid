@@ -1,5 +1,9 @@
 package com.ragdroid.feature.search
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -32,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,17 +53,20 @@ fun ChunkViewerScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = chunkIndex.coerceAtLeast(0)
     )
+
+    val isFromSearchTarget = (chunkIndex in uiState.allChunks.indices)
 
     LaunchedEffect(documentId, chunkIndex) {
         viewModel.loadDocument(documentId, chunkIndex)
     }
 
-    // Scroll directly to target chunk when chunks load
+    // Scroll directly to target chunk when chunks load if targeted
     LaunchedEffect(uiState.allChunks.size) {
-        if (uiState.allChunks.isNotEmpty() && chunkIndex in uiState.allChunks.indices) {
+        if (isFromSearchTarget) {
             listState.scrollToItem(chunkIndex)
         }
     }
@@ -106,18 +114,24 @@ fun ChunkViewerScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Viewing Chunk ${chunkIndex + 1} of ${uiState.allChunks.size}",
+                        text = if (isFromSearchTarget) {
+                            "Viewing Chunk ${chunkIndex + 1} of ${uiState.allChunks.size}"
+                        } else {
+                            "${uiState.allChunks.size} Total Chunks"
+                        },
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    uiState.allChunks.getOrNull(chunkIndex)?.chapterTitle?.let { chapter ->
-                        Text(
-                            text = chapter,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.secondary,
-                            maxLines = 1
-                        )
+                    if (isFromSearchTarget) {
+                        uiState.allChunks.getOrNull(chunkIndex)?.chapterTitle?.let { chapter ->
+                            Text(
+                                text = chapter,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.secondary,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
 
@@ -131,7 +145,7 @@ fun ChunkViewerScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     itemsIndexed(uiState.allChunks, key = { _, item -> item.id }) { index, chunk ->
-                        val isTargetChunk = (index == chunkIndex)
+                        val isTargetChunk = isFromSearchTarget && (index == chunkIndex)
 
                         Card(
                             modifier = Modifier
@@ -169,6 +183,21 @@ fun ChunkViewerScreen(
                                         },
                                         fontWeight = if (isTargetChunk) FontWeight.Bold else FontWeight.Normal
                                     )
+
+                                    IconButton(
+                                        onClick = {
+                                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                            val clip = ClipData.newPlainText("Chunk Text", chunk.text)
+                                            clipboard.setPrimaryClip(clip)
+                                            Toast.makeText(context, "Chunk copied to clipboard", Toast.LENGTH_SHORT).show()
+                                        }
+                                    ) {
+                                        Icon(
+                                            Icons.Default.ContentCopy,
+                                            contentDescription = "Copy Chunk",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
 
                                 chunk.chapterTitle?.let { chapter ->
